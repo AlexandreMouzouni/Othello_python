@@ -30,15 +30,27 @@ def prise_possible_direction(p, i, j, vertical, horizontal, joueur):
     if not case_valide(i, j):
         return False
 
-    case_actuelle = get_case(p, i, j)
-    if get_case(p, i+vertical, j+horizontal) == case_actuelle:
+    pion_actuel = get_case(p, i, j)
 
+    if get_case(i + vertical, j + horizontal) != pion_adverse(pion_actuel):
+        return False
+
+    k = 1
+    while not case_valide(i + vertical*k, j + horizontal*k):
+        if get_case(i + vertical*k, j + horizontal*k) == case_actuelle:
+            return True
+        k += 1
+    return False
 
 def test_pion_adverse():
     assert pion_adverse(1) == 2
     assert pion_adverse(2) == 1
 
 def test_prise_possible_direction():
+    assert prise_possible_direction(p,1,3,0,-1,2)  # retourne True
+    assert not prise_possible_direction(p,1,3,0,-1,1)  # retourne False
+    assert not prise_possible_direction(p,1,3,-1,-1,2) # retourne False
+    assert prise_possible_direction(p,1,0,0,1,1)   # retourne True
 
 if __name__ == '__main__':
     test_pion_adverse()
