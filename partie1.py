@@ -309,7 +309,7 @@ def afficher_plateau(plateau):
             if pion == 1:
                 ligne += colored('###', color='white', on_color=on_color)
             elif pion == 2:
-                ligne += colored('###', on_color=on_color)
+                ligne += colored('###', color='grey', on_color=on_color)
             else:
                 ligne += colored('   ', on_color=on_color)
 
