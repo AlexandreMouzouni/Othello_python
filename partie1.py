@@ -57,7 +57,7 @@ def get_case(plateau, i, j):
     # colonne et avancement dans le tableau linéaire sont la même chose.
     # Autrement dit, cette formule traduit l'indice de la forme matricielle
     # a la forme linéaire, utilisée dans notre programme.
-    indice = n*j + i
+    indice = n*i + j
     return cases[indice]
 
 def set_case(plateau, i, j, val):
@@ -84,7 +84,7 @@ def set_case(plateau, i, j, val):
 
     n, cases = plateau['n'], plateau['cases']
     # Passage matriciel --> linéaire.
-    indice = n*j + i
+    indice = n*i + j
     cases[indice] = val
 
     # case: nom assigné à l'élement courant qui est ensuite manipulé dans la boucle.
