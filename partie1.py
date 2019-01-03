@@ -143,7 +143,7 @@ def creer_plateau(n):
             # impair, le pion change de couleur car il est directement
             # a coté.
             # Paranthèses nécéssaires, sinon j%2 direct
-            if (i+j) % 2 == 0:
+            if (i+j) % 2 == 1:
                 pion = 1
             else:
                 pion = 2
@@ -307,9 +307,9 @@ def afficher_plateau(plateau):
 
             pion = get_case(plateau, i, j)
             if pion == 1:
-                ligne += colored('###', color='white', on_color=on_color)
-            elif pion == 2:
                 ligne += colored('###', color='grey', on_color=on_color)
+            elif pion == 2:
+                ligne += colored('###', color='white', on_color=on_color)
             else:
                 ligne += colored('   ', on_color=on_color)
 
@@ -350,13 +350,18 @@ def test_case_valide():
 def test_get_case():
     p = creer_plateau(4)
     assert get_case(p, 0, 0) == 0
-    assert get_case(p, 1, 1) == 1
-    assert get_case(p, 1, 2) == 2
+    assert get_case(p, 1, 1) == 2
+    assert get_case(p, 1, 2) == 1
     assert not get_case(p, 18, 1)
+
+    # Traduction linéaire -> matriciel
+    p['cases'][14] = 1
+    assert get_case(p, 3, 2) == 1
+
     p = creer_plateau(8)
     assert get_case(p, 0, 0) == 0
-    assert get_case(p, 3, 3) == 1
-    assert get_case(p, 3, 4) == 2
+    assert get_case(p, 3, 3) == 2
+    assert get_case(p, 3, 4) == 1
     assert not get_case(p, 18, 1)
 
 def test_set_case():
@@ -392,19 +397,19 @@ def test_creer_plateau():
     assert p['n'] == 4
     assert len(p['cases']) == 16
     assert get_case(p, 0, 0) == 0
-    assert get_case(p, 1, 1) == 1
-    assert get_case(p, 1, 2) == 2
-    assert get_case(p, 2, 1) == 2
-    assert get_case(p, 2, 2) == 1
+    assert get_case(p, 1, 1) == 2
+    assert get_case(p, 1, 2) == 1
+    assert get_case(p, 2, 1) == 1
+    assert get_case(p, 2, 2) == 2
 
     p = creer_plateau(8)
     assert p['n'] == 8
     assert len(p['cases']) == 64
     assert get_case(p, 0, 0) == 0
-    assert get_case(p, 3, 3) == 1
-    assert get_case(p, 3, 4) == 2
-    assert get_case(p, 4, 3) == 2
-    assert get_case(p, 4, 4) == 1
+    assert get_case(p, 3, 3) == 2
+    assert get_case(p, 3, 4) == 1
+    assert get_case(p, 4, 3) == 1
+    assert get_case(p, 4, 4) == 2
 
 def test_afficher_plateau():
     p = creer_plateau(4)
