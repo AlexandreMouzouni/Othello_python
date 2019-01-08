@@ -80,6 +80,8 @@ def mouvement_valide(plateau, i, j, joueur):
 
     # On teste pour les neuf directions possibles, c'est a dire toutes les combinaisons
     # des vecteurs entre (-1, -1) et (1, 1)
+    # Cependant, si tester dans la direction nous sortirait hors du tableau, on ne test pas la direction,
+    # parce que la prise est impossible dans ce sens.
     vecteur_i = -1
     while vecteur_i <= 1:
 
@@ -87,8 +89,13 @@ def mouvement_valide(plateau, i, j, joueur):
         while vecteur_j <= 1:
             # On ne teste pas pour la direction (0, 0)
             if i != 0 and j != 0:
-                if prise_possible_direction(plateau, i, j, vecteur_i, vecteur_j, joueur):
-                    return True
+                # Si la case avancée de 1 dans la direction n'est pas une case,
+                # alors on est a coté d'une bordure de tableau et la capture est impossible
+                # De plus, faire la fonction prise_possible_direction() sur un indice invalide
+                # serait une erreur
+                if case_valide(plateau, i+vecteur_i, j+vecteur_j):
+                    if prise_possible_direction(plateau, i, j, vecteur_i, vecteur_j, joueur):
+                        return True
 
             vecteur_j += 1
         vecteur_i += 1
@@ -156,6 +163,7 @@ def mouvement(plateau, i, j, joueur):
         vecteur_j = -1
         while vecteur_j <= 1:
             # On ne teste pas pour la direction (0, 0)
+            # Si le mouvement est valide, les pions seront mis a jour
             if i != 0 and j != 0:
                 mouvement_direction(plateau, i, j, vecteur_i, vecteur_j, joueur)
 
@@ -174,13 +182,14 @@ def joueur_peut_jouer(plateau, joueur):
     set_case(p,2,2,1)
     joueur_peut_jouer(p,1) # retourne False
     """
+
     i = 0
     while i < plateau['n']:
         j = 0
         while j < plateau['n']:
-            #test si la case est vide
+            # Test si la case est vide
             if plateau['cases'][i] == 0:
-                #test si c'est possible de placer le pion
+                # Test si c'est possible de placer le pion
                 if mouvement_valide(plateau, i, j, joueur):
                     return True
             j += 1
