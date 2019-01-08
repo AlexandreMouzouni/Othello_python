@@ -182,13 +182,14 @@ def joueur_peut_jouer(plateau, joueur):
     set_case(p,2,2,1)
     joueur_peut_jouer(p,1) # retourne False
     """
+    n, cases = plateau['n'], plateau['cases']
 
     i = 0
-    while i < plateau['n']:
+    while i < n:
         j = 0
-        while j < plateau['n']:
+        while j < n:
             # Test si la case est vide
-            if plateau['cases'][i] == 0:
+            if get_case(plateau, i, j) == 0:
                 # Test si c'est possible de placer le pion
                 if mouvement_valide(plateau, i, j, joueur):
                     return True
