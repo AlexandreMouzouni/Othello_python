@@ -321,11 +321,11 @@ def test_mouvement_direction():
 
     # Tests de types
     mouvement_direction(p,-1, -1, 0, 0, 1)
-    assert p['cases'] == [0, 0, 0, 0, 0, 2, 1, 0, 0, 2, 2, 0, 0, 2, 0, 0]
+    assert p['cases'] == [0, 0, 0, 0, 0, 2, 1, 0, 0, 1, 2, 0, 0, 0, 0, 0]
     mouvement_direction(p,0, 0, 0, 0, 17)
-    assert p['cases'] == [0, 0, 0, 0, 0, 2, 1, 0, 0, 2, 2, 0, 0, 2, 0, 0]
+    assert p['cases'] == [0, 0, 0, 0, 0, 2, 1, 0, 0, 1, 2, 0, 0, 0, 0, 0]
     mouvement_direction(p,0, 0, 17, 17, 0)
-    assert p['cases'] == [0, 0, 0, 0, 0, 2, 1, 0, 0, 2, 2, 0, 0, 2, 0, 0]
+    assert p['cases'] == [0, 0, 0, 0, 0, 2, 1, 0, 0, 1, 2, 0, 0, 0, 0, 0]
 
 def test_mouvement():
     p = creer_plateau(4)
