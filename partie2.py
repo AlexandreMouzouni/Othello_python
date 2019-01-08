@@ -215,7 +215,7 @@ def fin_de_partie(plateau):
     while i < n:
         j = 0
         while j < n:
-            if cases[i] == 0 :
+            if get_case(plateau, i, j) == 0 :
                 # Test si le mouvement est possible pour chacun des joueur
                 if mouvement_valide(plateau, i , j , 1) \
                 or mouvement_valide(plateau, i , j , 2):
