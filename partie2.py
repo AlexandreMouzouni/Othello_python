@@ -340,7 +340,7 @@ def test_mouvement():
     
     p = creer_plateau(4)
     # Place un pion blanc en 3, 1 avec une direction correcte
-    mouvement_direction(p,3, 1, -1, 0, 2)
+    mouvement(p,3, 1, 2,)
     assert p['cases'] == [0, 0, 0, 0, 0, 2, 1, 0, 0, 2, 2, 0, 0, 2, 0, 0]
 
 def test_joueur_peut_jouer():
