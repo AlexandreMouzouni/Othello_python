@@ -128,7 +128,8 @@ def mouvement_direction(plateau, i, j, vertical, horizontal, joueur):
     # Il suffit alors de faire une boucle et de s'arréter quand on rencontre le
     # pion de cette même couleur
     k = 1
-    while get_case(plateau, i + vertical*k, j + horizontal*k) != joueur:
+    while case_valide(plateau, i+vertical*k, j+ horizontal*k) \
+            and get_case(plateau, i + vertical*k, j + horizontal*k) != joueur:
         set_case(plateau, i + vertical*k, j + horizontal*k , joueur)
         k += 1
 
