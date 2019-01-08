@@ -318,9 +318,6 @@ def test_mouvement_direction():
     # Place un pion blanc en 3, 1 avec une fausse direction
     mouvement_direction(p,3, 1, -1, -1, 2)
     assert p['cases'] == [0, 0, 0, 0, 0, 2, 1, 0, 0, 1, 2, 0, 0, 0, 0, 0]
-    # Place un pion blanc en 3, 1 avec une direction correcte
-    mouvement_direction(p,3, 1, -1, 0, 2)
-    assert p['cases'] == [0, 0, 0, 0, 0, 2, 1, 0, 0, 2, 2, 0, 0, 2, 0, 0]
 
     # Tests de types
     mouvement_direction(p,-1, -1, 0, 0, 1)
@@ -340,6 +337,11 @@ def test_mouvement():
     assert p['cases'] == [0, 0, 0, 0, 0, 2, 1, 0, 0, 1, 2, 0, 0, 0, 0, 0]
     mouvement(p, 1, 3, 2)  # met la valeur 2 dans les cases (1, 2) et (1, 3)
     assert p['cases'] == [0, 0, 0, 0, 0, 2, 2, 2, 0, 1, 2, 0, 0, 0, 0, 0]
+    
+    p = creer_plateau(4)
+    # Place un pion blanc en 3, 1 avec une direction correcte
+    mouvement_direction(p,3, 1, -1, 0, 2)
+    assert p['cases'] == [0, 0, 0, 0, 0, 2, 1, 0, 0, 2, 2, 0, 0, 2, 0, 0]
 
 def test_joueur_peut_jouer():
     p = creer_plateau(4)
