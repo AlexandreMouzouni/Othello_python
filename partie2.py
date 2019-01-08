@@ -122,6 +122,16 @@ def mouvement_direction(plateau, i, j, vertical, horizontal, joueur):
     if vertical == 0 and horizontal == 0:
         return
 
+    if not prise_possible_direction(plateau, i, j, vertical, horizontal, joueur):
+        return
+
+    # On regarde dans la direction décalé de 1 si le pion à coté est de la
+    # valeur opposé
+    # Si c'est faux, la ligne ne peut pas être retournée
+    contenu_case = get_case(plateau, i + vertical, j + horizontal)
+    if contenu_case != pion_adverse(joueur):
+        return False
+
     # On sait déja, grâce a prise_possible_direction, qu'il y a au moins un pion
     # de la couleur opposé.
     # De plus, on sait qu'un pion de la même couleur nous attend à la fin
