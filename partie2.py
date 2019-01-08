@@ -220,21 +220,10 @@ def fin_de_partie(plateau):
        set_case(p,2,2,1)
        fin_de_partie(p) # retourne True
     """
-    n, cases = plateau['n'], plateau['cases']
-
-    i = 0
-    while i < n:
-        j = 0
-        while j < n:
-            if get_case(plateau, i, j) == 0 :
-                # Test si le mouvement est possible pour chacun des joueur
-                if mouvement_valide(plateau, i , j , 1) \
-                or mouvement_valide(plateau, i , j , 2):
-                    return 0
-            j += 1
-        i += 1
-
-    return True
+    if joueur_peut_jouer(plateau, 1) or joueur_peut_jouer(plateau, 2):
+        return 0
+    else:
+        return True
 
 def gagnant(plateau):
     """ Retourne :
