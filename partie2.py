@@ -39,20 +39,27 @@ def prise_possible_direction(p, i, j, vertical, horizontal, joueur):
     # On regarde dans la direction décalé de 1 si le pion à coté est de la
     # valeur opposé
     # Si c'est faux, la ligne ne peut pas être retournée
-    if get_case(p, i + vertical, j + horizontal) != pion_adverse(joueur):
+    contenu_case = get_case(p, i + vertical, j + horizontal)
+    if contenu_case != pion_adverse(joueur):
         return False
 
     # On sait donc que le premier pion après le pion actuel
     # est de la couleur opposé, donc on regarde dans la ligne à partir du
     # deuxième pion
 
-    # On regarde dans la ligne tous les pions suivant, en incrémentant le vecteur
+    # On regarde dans la ligne tous les pions suivants, en incrémentant le vecteur
     # direction de 1 à chaque fois
-    # Si on rencontre un pion de notre couleur, alors la prise est possible
-    # Cependant, si on sort du tableau, alors la prise est impossible
-    # car on n'a jamais rencontré de pion de notre couleur
     k = 2
+    # Si on sort du tableau, alors la prise est impossible
+    # car on n'a jamais rencontré de pion de notre couleur
     while case_valide(p, i + vertical*k, j + horizontal*k):
+        # contenu_case contient le contenu de la case regardée
+        contenu_case = get_case(p, i + vertical*k, j + horizontal*k)
+        
+        # Si on recontre une vide, alors la prise est impossible
+        if contenu_case == 0:
+            return False
+        # Si on rencontre au moins un pion de notre couleur, alors la prise est possible
         if get_case(p, i + vertical*k, j + horizontal*k) == joueur:
             return True
         k += 1
