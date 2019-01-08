@@ -89,11 +89,11 @@ def mouvement_valide(plateau, i, j, joueur):
         while vecteur_j <= 1:
             # On ne teste pas pour la direction (0, 0)
             if i != 0 and j != 0:
-                # Si la case avancée de 1 dans la direction n'est pas une case,
-                # alors on est a coté d'une bordure de tableau et la capture est impossible
-                # De plus, faire la fonction prise_possible_direction() sur un indice invalide
-                # serait une erreur
-                if case_valide(plateau, i+vecteur_i, j+vecteur_j):
+                # Si il n'y a pas au moins 2 cases libres dans
+                # la direction, la prise est impossible
+                # On vérifie donc si la case avancée de 2 dans
+                # la direction est libre
+                if case_valide(plateau, i+vecteur_i*2, j+vecteur_j*2):
                     if prise_possible_direction(plateau, i, j, vecteur_i, vecteur_j, joueur):
                         return True
 
@@ -122,12 +122,6 @@ def mouvement_direction(plateau, i, j, vertical, horizontal, joueur):
     if vertical == 0 and horizontal == 0:
         return
 
-    # Est-ce que la prise est possible?
-    if not prise_possible_direction(plateau, i, j, vertical, horizontal, joueur):
-        return
-
-    set_case(plateau, i, j, joueur)
-
     # On sait déja, grâce a prise_possible_direction, qu'il y a au moins un pion
     # de la couleur opposé.
     # De plus, on sait qu'un pion de la même couleur nous attend à la fin
@@ -153,6 +147,12 @@ def mouvement(plateau, i, j, joueur):
         return False
 
     if joueur not in (1, 2):
+        return False
+
+    # Est-ce que le mouvement est valide? Si oui, mettre le pion dans la case
+    if mouvement_valide(plateau, i, j):
+        set_case(plateau, i, j)
+    else:
         return False
 
     # On teste pour les neuf directions possibles, c'est a dire toutes les combinaisons
