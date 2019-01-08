@@ -208,12 +208,14 @@ def fin_de_partie(plateau):
        set_case(p,2,2,1)
        fin_de_partie(p) # retourne True
     """
+    n, cases = plateau['n'], plateau['cases']
+
     i = 0
-    while i < plateau['n']:
+    while i < n:
         j = 0
-        while j < plateau['n']:
-            if plateau['cases'][i] == 0 :
-                #test si le mouvement est possible pour chacun des joueur
+        while j < n:
+            if cases[i] == 0 :
+                # Test si le mouvement est possible pour chacun des joueur
                 if mouvement_valide(plateau, i , j , 1) \
                 or mouvement_valide(plateau, i , j , 2):
                     return 0
@@ -236,22 +238,22 @@ def gagnant(plateau):
     set_case(p,2,2,1)
     gagnant(p) # retourne 1
     """
-    i=0
+    i = 0
     pions_joueur_1 = 0
     pions_joueur_2 = 0
-    # on itere sur le tableau puis on compte les pions de chaque joueur
+    # On itère sur le tableau, puis on compte les pions de chaque joueur
     while i < len(plateau['cases']):
-        if plateau['cases'][i] == 1 :
+        if plateau['cases'][i] == 1:
             pions_joueur_1 += 1
-        elif plateau['cases'][i] == 2 :
+        elif plateau['cases'][i] == 2:
             pions_joueur_2 += 1
         i += 1
 
-    if pions_joueur_1 > pions_joueur_2 :
+    if pions_joueur_1 > pions_joueur_2:
         return 1
-    elif pions_joueur_1 < pions_joueur_2 :
+    elif pions_joueur_1 < pions_joueur_2:
         return 2
-    else :
+    else:
         return 0
 
 def test_pion_adverse():
@@ -271,9 +273,9 @@ def test_prise_possible_direction():
     assert not prise_possible_direction(p , 3,3 , 1 , 1 , 2)
     assert not prise_possible_direction(p , 0, 1 , 1 , 0 , 2)
     set_case(p , 0 , 2, 2)
-    #test pour un blanc place en bas capture pour une multitude de pions
+    # test pour un blanc place en bas capture pour une multitude de pions
     assert prise_possible_direction(p , 3 , 2 , -1 , 0, 2)
-    #test pour traverser sans trouver de pion de la meme couleur
+    # test pour traverser sans trouver de pion de la meme couleur
     # Traverse uniquement sur des noirs
     set_case(p , 0 , 2 , 1)
     assert not prise_possible_direction(p , 3 , 2 , -1 , 0 , 2)
