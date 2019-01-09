@@ -122,7 +122,7 @@ def mouvement(plateau, i, j, joueur):
 
     # Est-ce que le mouvement est valide? Si oui, mettre le pion dans la case
     if not mouvement_valide(plateau, i, j, joueur):
-        return False
+        return
     else:
         set_case(plateau, i, j, joueur)
 
