@@ -211,7 +211,11 @@ def saisir_taille_plateau():
     n = saisir_taille_plateau()
     n est un entier égal à 4, 6 ou 8.
     """
-    n=int(input("Veuilez saisir la taille du plateau [4, 6, 8]"))
+    n = input("Saisissez la taille du plateau [4, 6, 8]")
+            
+    if len(n) == 1:
+        if ord(n) < ord('1') or ord(n) > ord('9'):
+            n = int(n)
 
     saisie_valide_jouer = (4 , 6 , 8)
     while n not in saisie_valide_jouer:
