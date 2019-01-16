@@ -276,7 +276,7 @@ def othello():
             # Si partie == None, la partie est finie et rien n'est en cours
             partie = None
             # Appel récursif
-            menu(partie)
+            partie = menu(partie)
 
         if action == 1 :
             n = saisir_taille_plateau()
