@@ -56,6 +56,12 @@ def saisie_valide(partie, s):
 
     return True
 
+def nom_j(joueur):
+    if joueur == 1:
+        return "Noir"
+    else:
+        return "Blanc"
+
 def tour_jeu(partie):
     """ Effectue un tour de jeu :
     - efface le terminal,
@@ -97,15 +103,16 @@ def tour_jeu(partie):
         partie['joueur'] = pion_adverse(joueur)
 
     # Boucle de mouvement
+    print('C\'est au tour de', nom_j(joueur))
     proposition_coup(partie)
-    s = input("saisir un mouvement ou M pour revenir au menu principale ")
+    s = input("Saisir un mouvement ou M pour revenir au menu principal")
     # Si le joueur veut sortir, on retourne au menu
     if s == "M":
         return False
 
     while not saisie_valide(partie, s):
         print("La saisie est incorrecte")
-        s = input("saisir un mouvement ou M pour revenir au menu principale ")
+        s = input("Saisir un mouvement ou M pour revenir au menu principal")
         if s == "M":
             return False
 
@@ -196,11 +203,11 @@ def saisir_taille_plateau():
     n = saisir_taille_plateau()
     n est un entier égal à 4, 6 ou 8.
     """
-    n=int(input("veuilez saisir entre un nombre entre 4,6 ou 8 "))
+    n=int(input("Veuilez saisir la taille du plateau [4, 6, 8]"))
 
     saisie_valide_jouer = (4 , 6 , 8)
     while n not in saisie_valide_jouer:
-         n=int(input("saisir un nombre entre 4,6 ou 8"))
+         n=int(input("Saisissez la taille du plateau [4, 6, 8]"))
 
     return n
 
@@ -276,7 +283,7 @@ def othello():
         if tour_jeu(partie) == False :
             if fin_de_partie(partie["plateau"]):
                 winneur = gagnant(partie["plateau"])
-                print('Le gagnant est', winneur)
+                print('Le gagnant est', nom_j(winneur))
             partie = menu(partie)
 
 #######################################
@@ -336,7 +343,9 @@ def proposition_coup(partie):
 
         i += 1
 
-    print(meilleur_coup)
+    i = chr(97 + meilleur_coup[0])
+    j = meilleur_coup[1] + 1
+    print('Coup proposé par l\'ordinateur:', str(i)+str(j))
 
 def test_creer_partie():
     attendu = {'joueur': 1, 'plateau': {'n': 4,
