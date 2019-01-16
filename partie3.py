@@ -41,6 +41,10 @@ def saisie_valide(partie, s):
     if s == 'M':
         return True
 
+    # Sécurité sur la chaîne
+    if len(s) != 2:
+        return False
+
     # On vérifie la lettre
     i = ord(s[0]) - ord('a')
     j = int(s[1]) - 1
