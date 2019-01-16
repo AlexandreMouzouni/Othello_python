@@ -46,6 +46,7 @@ def saisie_valide(partie, s):
         return False
 
     # Sécurité sur le nombre (pas de conversion erronée)
+    # Si ce n'est PAS dans ord(1).. ord(9)
     if ord(s[1]) < ord('1') or ord(s[1]) > ord('9'):
         return False
 
@@ -214,7 +215,7 @@ def saisir_taille_plateau():
     n = input("Saisissez la taille du plateau [4, 6, 8]")
             
     if len(n) == 1:
-        if ord(n) < ord('1') or ord(n) > ord('9'):
+        if ord(n) >= ord('1') or ord(n) <= ord('9'):
             n = int(n)
 
     saisie_valide_jouer = (4 , 6 , 8)
@@ -222,7 +223,7 @@ def saisir_taille_plateau():
         n = input("Saisissez la taille du plateau [4, 6, 8]")
         
         if len(n) == 1:
-            if ord(n) < ord('1') or ord(n) > ord('9'):
+            if ord(n) >= ord('1') or ord(n) <= ord('9'):
                 n = int(n)
 
 
