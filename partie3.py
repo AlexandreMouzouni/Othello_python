@@ -1,4 +1,5 @@
 from partie2 import *
+from json import dumps, loads
 import os
 
 def creer_partie(n):
@@ -33,26 +34,25 @@ def saisie_valide(partie, s):
     saisie_valide(p, "b4") # return False
     """
     n = partie['plateau']['n']
+    plateau = partie['plateau']
+    joueur = partie['joueur']
 
     # Si s est égal a M, pas besoin de vérifier si c'est une case
-    if s != 'M':
-        # On vérifie la lettre
-        lettre = s[0]
-        valeur_lettre = ord(lettre)
-        valeur_derniere_lettre = ord('a') + n - 1
+    if s == 'M':
+        return True
 
-        lettre = s[0]
-        valeur_lettre = ord(lettre)
-        valeur_derniere_lettre = ord('a') + n - 1
+    # On vérifie la lettre
+    i = ord(s[0]) - ord('a')
+    j = int(s[1]) - 1
+    print("i", i)
+    print("j", j)
 
-        if valeur_lettre >= valeur_derniere_lettre \
-            or valeur_lettre < ord('a'):
-            return False
+    #if not case_valide(plateau, i, j):
+    #    return False
 
-        # On vérifie le chiffre
-        nombre = int(s[1])
-        if nombre < 1 or nombre > 8:
-            return False
+    # Le mouvement est-il valide?
+    if not mouvement_valide(plateau, i, j, joueur):
+        return False
 
     return True
 
@@ -77,8 +77,6 @@ def tour_jeu(partie):
     }
     """
 
-    # A réparer
-
     def effacer_terminal():
         """ Efface le terminal. """
         os.system('clear')  # pour linux
@@ -89,29 +87,37 @@ def tour_jeu(partie):
     plateau = partie['plateau']
     joueur = partie['joueur']
 
+    # Si personne ne peut jouer, la fonction est fausse
     if not joueur_peut_jouer(plateau, joueur):
         return False
 
+    # Si un des deux joueurs ne peut pas jouer, on saute son tour
+    if not joueur_peut_jouer(plateau, joueur):
+        print('Le joueur', joueur, 'ne peut pas jouer, on saute son tour')
+        partie['joueur'] = pion_adverse(joueur)
+
+    # Boucle de mouvement
+    proposition_coup(partie)
     s = input("saisir un mouvement ou M pour revenir au menu principale ")
-    if s != "M":
-        saisie = False
-        while not saisie:
-            if saisie_valide(partie, s):
-                lettre = s[0]
-                # on convertit la lette en nombre avec ord , on sait que ord(a) vaut 97
-                #donc on soustrait 96  a ce nombre
-                i = ord(lettre) - 96
-                j = int(s[1])
-
-                if mouvement_valide(plateau, i, j, joueur ) :
-                    mouvement(plateau, i, j, joueur)
-                    saisie = True
-
-            print("La saisie est incorrecte")
-            s = input("saisir un mouvement ou M pour revenir au menu principale ")
-        return True
-    else:
+    # Si le joueur veut sortir, on retourne au menu
+    if s == "M":
         return False
+
+    while not saisie_valide(partie, s):
+        print("La saisie est incorrecte")
+        s = input("saisir un mouvement ou M pour revenir au menu principale ")
+        if s == "M":
+            return False
+
+    # La saisie est correcte, on effectue le mouvement et on retourne True
+    i = ord(s[0]) - ord('a')
+    j = int(s[1]) - 1
+    mouvement(plateau, i, j, joueur)
+    # Dans l'état du jeu, on change de joueur
+    # Cela nous permet dans le graphe des états de changer d'un état à un autre
+    # uniquement avec la fonction tour_jeu
+    partie['joueur'] = pion_adverse(joueur)
+    return True
 
 def saisir_action(partie):
     """ Retourne le choix du joueur pour menu (saisie contrôlée):
@@ -132,7 +138,7 @@ def saisir_action(partie):
         s = input('Entrez une action:')
         entree = int(s)
 
-        # Si la partie n'est pas vide, alors une partie est en coursw
+        # Si la partie n'est pas vide, alors une partie est en cours
         partie_en_cours = partie is not None
 
         if entree == 0:
@@ -175,17 +181,162 @@ def jouer(partie) :
 
     Si res vaut True, alors les deux joueurs ont fait une partie entière d'Othello
     sur une grille 4 * 4.
+
     """
     while True:
-        # Joueur 1
-        # Si tour_jeu est faux, le joueur actuel a souhaité
-        # sortir du jeu pour aller dans le menu principal
-        # On retourne donc false
         if not tour_jeu(partie):
-            return False
-        if fin_de_partie(partie['plateau']):
-            return True
+            if fin_de_partie(partie['plateau']):
+                return True
+            else:
+                return False
 
+def saisir_taille_plateau():
+    """ Fait saisir un nombre parmi 4,6 ou 8 (saisie contrôlée).
+    :Exemple:
+    n = saisir_taille_plateau()
+    n est un entier égal à 4, 6 ou 8.
+    """
+    n=int(input("veuilez saisir entre un nombre entre 4,6 ou 8 "))
+
+    saisie_valide_jouer = (4 , 6 , 8)
+    while n not in saisie_valide_jouer:
+         n=int(input("saisir un nombre entre 4,6 ou 8"))
+
+    return n
+
+def sauvegarder_partie(partie):
+    """ Sauvegarde la partie passée en paramètre au format json
+    dans le fichier sauvegarde_partie.json
+    :Exemple:
+    p = creer_partie(4)
+    sauvegarder_partie(p)
+    Le fichier sauvegarde_partie.json doit contenir :
+    {"joueur": 1, "plateau": {"n": 4, "cases": [0, 0, 0, 0, 0, 2, 1, 0, 0, 1, 2, 0,
+    0, 0, 0, 0]}}
+    """
+    s = dumps(partie)
+    f = open("sauvergarde_partie.json", "w")
+    f.write(s)
+    f.close()
+
+def charger_partie():
+    """ Crée la partie à partir des données du fichier sauvegarde_partie.json
+    ou crée une nouvelle partie 4*4.
+    Retourne la partie créée.
+    :Exemple:
+    p = charger_partie()
+    Si le fichier sauvegarde_partie.json contient :
+    {"joueur": 1, "plateau": {"n": 4, "cases": [0, 0, 0, 0, 0, 2, 1, 0, 0, 1, 2, 0,
+    0, 0, 0, 0]}}
+    alors p correspond à une nouvelle partie
+    """
+    f  = open("sauvergarde_partie.json , r")
+    s = f.read()
+    f.close()
+
+    partie = loads(s)
+
+    return partie
+
+def othello():
+    """ Fonction permettant de jouer à Othello. On peut enchaîner, sauvegarder,
+    charger et recommencer des parties d'Othello.
+    :Exemple:
+    othello()
+    """
+    def menu(partie):
+        action = saisir_action(partie)
+
+        if action == 0:
+            # On vide la partie, puis on revient au menu
+            # pour laisser l'utilisateur faire ce qu'il veut
+            # Si partie == None, la partie est finie et rien n'est en cours
+            partie = None
+            # Appel récursif
+            menu(partie)
+
+        if action == 1 :
+            n = saisir_taille_plateau()
+            partie = creer_partie(n)
+
+        if action == 2 :
+            partie = charger_partie()
+
+        if action == 3:
+            sauvegarder_partie(partie)
+        # ne sert a rien de faire if action == 4 , car on ne modifie pas l'etat
+
+        return partie
+
+
+    n = saisir_taille_plateau()
+    partie = creer_partie(n)
+    while True :
+        # on met tour_jeu dans un if , il sera donc appeler a chaque tour de boucle
+        if tour_jeu(partie) == False :
+            if fin_de_partie(partie["plateau"]):
+                winneur = gagnant(partie["plateau"])
+                print('Le gagnant est', winneur)
+            partie = menu(partie)
+
+#######################################
+# Défi algorithmique
+
+def proposition_coup(partie):
+    """ Calcule sur le plateau quel coup prendrait le plus de pions """
+    plateau = partie['plateau']
+    n = partie['plateau']['n']
+
+    # Premiere passe: récupérer tous les coups possibles
+    liste_coups = []
+    i = 0
+    while i < n:
+        j = 0
+        while j < n:
+            if mouvement_valide(plateau, i, j, partie['joueur']):
+                liste_coups.append( (i,j) )
+            j += 1
+        i += 1
+
+    meilleur_coup = liste_coups[0]
+    meilleur_coup_pions = 0
+    # Pour chaque coup, tester...
+    i = 0
+    while i < len(liste_coups):
+        ci, cj = liste_coups[i][0], liste_coups[i][1]
+        total_coup = 0
+
+        #... dans chaque direction...
+        vecteur_i = -1
+        while vecteur_i <= 1:
+            vecteur_j = -1
+            while vecteur_j <= 1:
+
+                if vecteur_i != 0 or vecteur_j != 0:
+                    # ..si la prise est possible:
+                    if prise_possible_direction(plateau, ci, cj, \
+                                                vecteur_i, vecteur_j, partie['joueur']):
+                        k = 1
+                        while case_valide(plateau, ci + vecteur_i * k, cj + vecteur_j * k) \
+                            and get_case(plateau, ci + vecteur_i * k, cj + vecteur_j * k) != partie['joueur']:
+                            k += 1
+
+                        # k représente le nombre de pions possibles à prendre dans
+                        # la direction
+                        # On ajoute ca pour chaque direction à total_coup
+                        total_coup += k
+                vecteur_j += 1
+            vecteur_i += 1
+
+        # Si ce total de pions prit dans la direction est le meilleur, mettre a jour
+        # meilleur coup
+        if total_coup > meilleur_coup_pions:
+            meilleur_coup = liste_coups[i]
+            meilleur_coup_pions = total_coup
+
+        i += 1
+
+    print(meilleur_coup)
 
 def test_creer_partie():
     attendu = {'joueur': 1, 'plateau': {'n': 4,
@@ -195,9 +346,10 @@ def test_creer_partie():
 def test_saisie_valide():
     p = creer_partie(4)
     assert saisie_valide(p, "M")  # retourne True
-    assert saisie_valide(p, "a1") # retourne True
-    assert saisie_valide(p, "b1") # retourne True
-    assert saisie_valide(p, "b4") # return False
+    print('Test', mouvement_valide(p['plateau'], 0, 1, 1))
+    print('Prise', prise_possible_direction(p['plateau'], 0, 1,   1, 0,  1))
+    afficher_plateau(p['plateau'])
+    print("Saisie", saisie_valide(p, "a2")) # retourne True
 
 def test_tour_jeu():
     partie = creer_partie(6)
@@ -206,7 +358,7 @@ def test_tour_jeu():
 def test_saisir_action():
     partie = creer_partie(4)
     # Premier cas: il n'y a pas de partie en cours
-    #n = saisir_action(None)
+    # n = saisir_action(None)
     # Deuxieme cas: partie en cours
     n = saisir_action(partie)
 
@@ -215,8 +367,9 @@ def test_jouer():
     jouer(partie)
 
 if __name__ == '__main__':
-    test_creer_partie()
-    test_saisie_valide()
+    #test_creer_partie()
+    #test_saisie_valide()
     #test_tour_jeu()
     #test_saisir_action()
-    test_jouer()
+    #test_jouer()
+    othello()

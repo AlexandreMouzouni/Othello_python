@@ -31,7 +31,10 @@ def prise_possible_direction(p, i, j, vertical, horizontal, joueur):
     # On regarde dans la direction décalé de 1 si le pion à coté est de la
     # valeur opposé
     # Si c'est faux, la ligne ne peut pas être retournée
-    contenu_case = get_case(p, i + vertical, j + horizontal)
+    if case_valide(p, i + vertical, j + horizontal):
+        contenu_case = get_case(p, i + vertical, j + horizontal)
+    else: return False
+
     if contenu_case != pion_adverse(joueur):
         return False
 
@@ -52,7 +55,7 @@ def prise_possible_direction(p, i, j, vertical, horizontal, joueur):
         if contenu_case == 0:
             return False
         # Si on rencontre au moins un pion de notre couleur, alors la prise est possible
-        if get_case(p, i + vertical*k, j + horizontal*k) == joueur:
+        if contenu_case == joueur:
             return True
         k += 1
     return False
@@ -71,15 +74,16 @@ def mouvement_valide(plateau, i, j, joueur):
     # des vecteurs entre (-1, -1) et (1, 1)
     # Cependant, si tester dans la direction nous sortirait hors du tableau, on ne test pas la direction,
     # parce que la prise est impossible dans ce sens.
+    if get_case(plateau, i, j) != 0:
+        return False
+
     vecteur_i = -1
     while vecteur_i <= 1:
-
         vecteur_j = -1
         while vecteur_j <= 1:
-            # On ne teste pas pour la direction (0, 0)
-            if i != 0 and j != 0:
-                if prise_possible_direction(plateau, i, j, vecteur_i, vecteur_j, joueur):
-                    return True
+        # On ne teste pas pour la direction (0, 0)
+            if prise_possible_direction(plateau, i, j, vecteur_i, vecteur_j, joueur):
+                return True
 
             vecteur_j += 1
         vecteur_i += 1
@@ -105,6 +109,7 @@ def mouvement_direction(plateau, i, j, vertical, horizontal, joueur):
     # Il suffit alors de faire une boucle et de s'arréter quand on rencontre le
     # pion de cette même couleur
     k = 1
+    # Prend le nombre de pions modifiés
     while case_valide(plateau, i+vertical*k, j+ horizontal*k) \
             and get_case(plateau, i + vertical*k, j + horizontal*k) != joueur:
         set_case(plateau, i + vertical*k, j + horizontal*k , joueur)
@@ -135,7 +140,7 @@ def mouvement(plateau, i, j, joueur):
         while vecteur_j <= 1:
             # On ne teste pas pour la direction (0, 0)
             # Si le mouvement est valide, les pions seront mis a jour
-            if i != 0 and j != 0:
+            if vecteur_i != 0 or vecteur_j != 0:
                 mouvement_direction(plateau, i, j, vecteur_i, vecteur_j, joueur)
 
             vecteur_j += 1
@@ -244,20 +249,10 @@ def test_prise_possible_direction():
     set_case(p , 1 , 2 , 0)
     assert not prise_possible_direction(p , 3 , 2 , -1 , 0 , 2)
 
-    # Test si la direction est (0, 0)
-    assert not prise_possible_direction(p , 1, 1, 0, 0 , 2)
-    # Test pour case invalide
-    assert not prise_possible_direction(p, 14, 14, 0, 0, 2)
-    # Test pour joueur invalide
-    assert not prise_possible_direction(p, 0, 0, 0, 0, 14)
-
 def test_mouvement_valide():
     p = creer_plateau(4)
     assert mouvement_valide(p,1,3,2) # retourne True
     assert not mouvement_valide(p,0,0,2) # retourne False
-
-    # Test de type
-    assert not mouvement_valide(p, 13, 13, 1)
 
 def test_mouvement_direction():
     p = creer_plateau(4)
@@ -268,19 +263,8 @@ def test_mouvement_direction():
     mouvement_direction(p,3, 1, -1, -1, 2)
     assert p['cases'] == [0, 0, 0, 0, 0, 2, 1, 0, 0, 1, 2, 0, 0, 0, 0, 0]
 
-    # Tests de types
-    mouvement_direction(p,-1, -1, 0, 0, 1)
-    assert p['cases'] == [0, 0, 0, 0, 0, 2, 1, 0, 0, 1, 2, 0, 0, 0, 0, 0]
-    mouvement_direction(p,0, 0, 0, 0, 17)
-    assert p['cases'] == [0, 0, 0, 0, 0, 2, 1, 0, 0, 1, 2, 0, 0, 0, 0, 0]
-    mouvement_direction(p,0, 0, 17, 17, 0)
-    assert p['cases'] == [0, 0, 0, 0, 0, 2, 1, 0, 0, 1, 2, 0, 0, 0, 0, 0]
-
 def test_mouvement():
     p = creer_plateau(4)
-    # Tests de type
-    assert not mouvement(p, 17, 17, 0)
-    assert not mouvement(p, 0, 0, 17)
 
     mouvement(p, 0, 3, 2)  # ne modifie rien
     assert p['cases'] == [0, 0, 0, 0, 0, 2, 1, 0, 0, 1, 2, 0, 0, 0, 0, 0]

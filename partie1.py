@@ -43,10 +43,6 @@ def get_case(plateau, i, j):
     get_case(p,18,3) # lève une erreur
     """
 
-    # Erreur si la case n'est pas valide
-    if not case_valide(plateau, i, j):
-        return False
-
     n, cases = plateau['n'], plateau['cases']
 
     # On interpréte le tableau linéaire comme un tableau à deux dimensions.
@@ -73,14 +69,6 @@ def set_case(plateau, i, j, val):
     set_case(p,18,3,1) # lève une erreur
     set_case(p,2,3,6)  # lève une erreur
     """
-    # Erreur si la case n'est pas valide
-    if not case_valide(plateau, i, j):
-        return False
-
-    # Erreur si la valeur n'est pas valide (n'est pas entre les valeurs possible
-    # prises pour les cases).
-    if val < 0 or val > 2:
-        return False
 
     n, cases = plateau['n'], plateau['cases']
     # Passage matriciel --> linéaire.
@@ -107,15 +95,6 @@ def creer_plateau(n):
     - n : 4
     - cases : [0, 0, 0, 0, 0, 2, 1, 0, 0, 1, 2, 0, 0, 0, 0, 0]
     """
-
-    # On regarde si la taille du tableau est correcte.
-    # Tuple: l'ensemble 4, 6, 8 des valeurs correctes ne sera jamais modifié et
-    #        débarassé immédiatement.
-    #        Ainsi, on peut utiliser un tuple pour utiliser moins de mémoire.
-    # in: appartenance à un ensemble. Ici, l'ensemble des valeurs 4,6,8.
-    if n not in (4, 6, 8):
-        return False
-
     plateau = {}
     plateau['n'] = n
 
@@ -155,99 +134,6 @@ def creer_plateau(n):
         i += 1
 
     return plateau
-
-# def afficher_plateau_moyen(plateau):
-#     cases, n = plateau['cases'], plateau['n']
-#
-#     # Solution quadratique O(n^2)
-#     # i = 0
-#     # while i < n:
-#     #     j = 0
-#     #     while j < n:
-#     #         # Même formule que pour la matrice
-#     #         # Elle s'utilise dans la boucle.
-#     #         ligne += ' ' + str(cases[i*n + j]) + ' '
-#     #         j += 1
-#     #     print(ligne)
-#     #     ligne = ''
-#     #     i += 1
-#
-#     # Solution linéaire O(n)
-#     # i = 0
-#     # while i < len(cases):
-#     #     if i % n == 0 and i != 0:
-#     #         print(ligne)
-#     #         ligne = ''
-#     #     ligne += ' ' + str(cases[i]) + ' '
-#     #     i += 1
-#
-#     def ligne_etoile():
-#         # La ligne est composée de bordures et de coins
-#         # On ajoute la somme de toutes les étoiles des bordures
-#         # et toutes les étoiles des coins
-#         # Bordures de longeur 6, étoiles de longeur 1
-#         etoiles_ligne = 6*n
-#         etoiles_coins = n+1
-#         total = etoiles_ligne + etoiles_coins
-#         return total * '*'
-#
-#     def ligne_espace():
-#         # Mode itératif
-#         # On considère chaque section '*     ' comme un bloc
-#         # contigu
-#         # Ainsi, on peut simplement faire une boucle et ajouter
-#         # une étoile à la fin
-#         ligne = ''
-#
-#         i = 0
-#         while i < n:
-#             ligne += '*' + (' ' * 6)
-#             i += 1
-#         ligne += '*'
-#
-#         return ligne
-#
-#     def ligne_pion(i):
-#         # Mode itératif
-#         # On doit maintenant également considérer l'existence
-#         # d'un pion
-#         ligne = ''
-#
-#         j = 0
-#         while j < n:
-#             ligne += '*  '
-#
-#             # Si le pion existe, alors on l'insère dans notre ligne
-#             # en tant que B ou N
-#             pion = get_case(plateau, i, j)
-#             if pion == 1:
-#                 ligne += 'B'
-#             elif pion == 2:
-#                 ligne += 'N'
-#             else:
-#                 ligne += ' '
-#
-#             ligne += '   '
-#
-#             j += 1
-#
-#         ligne += '*'
-#
-#         return ligne
-#
-#     # Boucle principale
-#     # On affiche chaque ligne en forme de bloc contigu à chaque
-#     # tour de boucle, puis on finit avec une ligne étoile pour
-#     # finir le tableau.
-#     i = 0
-#     while i < n:
-#         print(ligne_etoile())
-#         print(ligne_espace())
-#         print(ligne_pion(i))
-#         print(ligne_espace())
-#         i += 1
-#
-#     print(ligne_etoile())
 
 def afficher_plateau(plateau):
     """
@@ -352,7 +238,6 @@ def test_get_case():
     assert get_case(p, 0, 0) == 0
     assert get_case(p, 1, 1) == 2
     assert get_case(p, 1, 2) == 1
-    assert not get_case(p, 18, 1)
 
     # Traduction linéaire -> matriciel
     p['cases'][14] = 1
@@ -362,13 +247,8 @@ def test_get_case():
     assert get_case(p, 0, 0) == 0
     assert get_case(p, 3, 3) == 2
     assert get_case(p, 3, 4) == 1
-    assert not get_case(p, 18, 1)
 
 def test_set_case():
-    p = creer_plateau(4)
-    assert not set_case(p, 0, 0, 3)
-    assert not set_case(p, 5, 5, 1)
-
     p = creer_plateau(4)
     set_case(p, 0, 0, 1)
     assert get_case(p, 0, 0) == 1
@@ -390,7 +270,6 @@ def test_set_case():
     assert get_case(p, 3, 4) == 1
 
 def test_creer_plateau():
-    assert not creer_plateau(10)
 
     p = creer_plateau(4)
     # On test ce qu'il y a dans le plateau
