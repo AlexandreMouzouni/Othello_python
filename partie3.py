@@ -45,6 +45,10 @@ def saisie_valide(partie, s):
     if len(s) != 2:
         return False
 
+    # Sécurité sur le nombre (pas de conversion erronée)
+    if ord(s[1]) < ord('1') or ord(s[1]) > ord('9'):
+        return False
+
     # On vérifie la lettre
     i = ord(s[0]) - ord('a')
     j = int(s[1]) - 1
