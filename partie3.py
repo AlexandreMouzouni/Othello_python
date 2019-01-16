@@ -238,7 +238,7 @@ def sauvegarder_partie(partie):
     0, 0, 0, 0]}}
     """
     s = dumps(partie)
-    f = open("sauvergarde_partie.json", "w")
+    f = open("sauvegarde_partie.json", "w")
     f.write(s)
     f.close()
 
@@ -253,7 +253,7 @@ def charger_partie():
     0, 0, 0, 0]}}
     alors p correspond à une nouvelle partie
     """
-    f  = open("sauvergarde_partie.json , r")
+    f  = open("sauvegarde_partie.json", "r")
     s = f.read()
     f.close()
 
@@ -300,6 +300,7 @@ def othello():
             if fin_de_partie(partie["plateau"]):
                 winneur = gagnant(partie["plateau"])
                 print('Le gagnant est', nom_j(winneur))
+                partie = None
             partie = menu(partie)
 
 #######################################
