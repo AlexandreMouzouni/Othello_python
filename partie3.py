@@ -53,8 +53,6 @@ def saisie_valide(partie, s):
     # On vérifie la lettre
     i = ord(s[0]) - ord('a')
     j = int(s[1]) - 1
-    print("i", i)
-    print("j", j)
 
     #if not case_valide(plateau, i, j):
     #    return False
